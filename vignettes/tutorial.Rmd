@@ -1,0 +1,77 @@
+---
+title: "STATpackage Tutorial"
+author: "Jinting Liu"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{STATpackage Tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(STATpackage)
+library(dplyr)
+data("my_penguins")
+```
+
+This package is used to do some statistical calculations including linear model, t.test and prediction using
+cross validation and nearest neighbors.
+
+Here's an example of how to use the function `my_t.test()`.
+The function performs t-test on vectors of data. It takes in a numeric vector, alternative hypothesis and null hypothesis value of mean. It outputs test statistic, degree of freedom, alternative from input, and the p_value.
+
+```{r}
+# extract body mass from the data and remove NA values
+dat = my_penguins %>% 
+  select(species, bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g)
+dat = na.omit(dat)
+bm = dat$body_mass_g
+# run the my_t.test function
+result = my_t.test(bm, "less", 4000)
+result
+```
+
+We can see that the p-value is `r result$p_value`, which is far more than 0.05, meaning that we have insufficient evidence to reject the null hypothesis that the mean body mass is 4000g.
+
+Here's an example of how to use the function `my_lm()`.
+This function performs a linear regression model on input data with given formula that returns coefficient table similar to that from summary(lm()). The input is formula and a dataset and the output is coefficient table.
+
+```{r, warning=FALSE}
+# extract x and y from the data and remove NA values
+fl = dat$flipper_length_mm
+bm = dat$body_mass_g
+# run the my_lm function
+result = my_lm(bm ~ fl, dat)
+result
+```
+
+We can see that the coefficient associated with flipper_length_mm is `r result$Estimate[2]`, which means that 1 unit 
+increase in flipper_length_mm will result in `r result$Estimate[2]` unit increase in body_mass_g. The hypothesis that the mean difference between flipper_length_mm and body_mass_g is 0. We can see that the p-value is much less than 0.05, which means that there is a significant relationship between flipper_length_mm and body_mass_g.
+
+Here's an example of how to use the function `my_knn_cv()`.
+This function uses cross validation and k-nearest neighbors to perform prediction. It takes in a training data set, true class value of training data, integer representing number of neighbors and integer representing number of folds for CV. The output is a vector of predicted class and a numeric with cross validation classification error.
+
+```{r}
+# extract train the cl from input data set
+cl = dat$species
+train = data.frame("bill_length_mm" = dat$bill_length_mm, "bill_depth_mm" = dat$bill_depth_mm,
+                   "flipper_length_mm" = dat$flipper_length_mm, "body_mass_g" = dat$body_mass_g)
+train_mis = 0
+cv_mis = 0
+# use different k_n and record training misclassification rates and CV misclassification rates
+for (i in 1:10) {
+  res = my_knn_cv(train, cl, i, 5)
+  train_mis[i] = mean(res[[1]] != as.vector(cl))
+  cv_mis[i] = res[[2]]
+}
+data.frame(train_mis, cv_mis)
+```
+
+We can see that we choose model with model 1 (with 1 nearest neighbor) based on training misclassification rates since its rate is the least. Also, we choose model with model 1 (with 1 nearest neighbor) based on CV misclassification rates since its rate is the least. In conclusion, we choose the model with k_nn = 1 since it has both the least training misclassification error and the least CV misclassification error.

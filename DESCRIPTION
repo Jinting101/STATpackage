@@ -1,0 +1,24 @@
+Package: STATpackage
+Title: Some package for statistical functions
+Version: 0.0.0.9000
+Authors@R: 
+    person("Jinting", "Liu", , "charlesliujinting@outlook.com", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: This package writes packages that can be used for statistical computing.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Depends: 
+    R (>= 2.10)
+LazyData: true
+Imports: 
+    magrittr,
+    class,
+    tibble,
+    stats
+Suggests: 
+    rmarkdown,
+    knitr,
+    dplyr
+VignetteBuilder: knitr

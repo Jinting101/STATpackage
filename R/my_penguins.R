@@ -1,0 +1,27 @@
+#' Penguins data
+#'
+#' Excerpt of the Penguins data on different properties of penguins
+#'
+#' This data comes from \code{palmerpenguins} package.
+#'
+#' @format The main data frame \code{penguins} has 344 rows and 8 variables:
+#' \describe{
+#'   \item{species}{factor with 3 levels}
+#'   \item{island}{factor with 3 levels}
+#'   \item{bill_length_mm}{bill length in unit of mm}
+#'   \item{bill_depth_mm}{bill depth in unit of mm}
+#'   \item{flipper_length_mm}{filpper length in unit of mm}
+#'   \item{body_mass_g}{body mass in unit of g}
+#'   \item{sex}{sex of the penguins}
+#'   \item{year}{year of the penguins when found}
+#'   }
+#'
+#' @source \url{https://allisonhorst.github.io/palmerpenguins/}
+#' @importFrom tibble tibble
+#' @examples
+#' penguins <- my_penguins
+#' str(penguins)
+#' head(penguins)
+#' summary(penguins)
+#'
+"my_penguins"
